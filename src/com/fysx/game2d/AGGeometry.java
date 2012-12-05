@@ -79,8 +79,12 @@ public class AGGeometry {
 			FloatBuffer vertexBuffer = vbb.asFloatBuffer();
 			vertexBuffer.put(vertices);
 			vertexBuffer.position(0);
-
-			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
+			try{
+						gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);	
+			}
+			catch(Exception e){
+				Log.e("exc", e.toString());
+			}
 			gl.glPushMatrix();
 			gl.glColor4f((float)color[0],(float)color[1],(float)color[2],(float)color[3]);
 			gl.glDrawArrays(GL10.GL_LINE_LOOP, 0,2);

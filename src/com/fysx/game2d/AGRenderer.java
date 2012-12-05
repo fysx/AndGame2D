@@ -28,7 +28,7 @@ public class AGRenderer implements Renderer {
 	}
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		_objects = new AGObject2D[4];
+		_objects = new AGObject2D[2];
 		_phys= new AGPhysics();
 		float[] vertices = {
 				-0.5f,-0.5f,
@@ -38,35 +38,35 @@ public class AGRenderer implements Renderer {
 				//0f,0f,
 		};
 		float[] vertices2 = {
-				-5.5f,-0.5f,
-				5.5f,-0.5f,
-				5.5f,0.5f,
-				-5.5f,0.5f,
+				-2.5f,-0.5f,
+				2.5f,-0.5f,
+				2.5f,0.5f,
+				-2.5f,0.5f,
 				//0f,0f,
 		};
-		_objects[0] = new AGObject2D(vertices);
+		_objects[0] = new AGObject2D(vertices2);
 		_objects[1] = new AGObject2D(vertices);
-		_objects[2] = new AGObject2D(vertices);
-		_objects[3] = new AGObject2D(vertices2);
+		//_objects[2] = new AGObject2D(vertices);
+		//_objects[3] = new AGObject2D(vertices2);
 		_objects[0].setInvMass(0);
 		_objects[1].setInvMass(10.1f);
-		_objects[2].setInvMass(10.1f);
-		_objects[3].setInvMass(0);
+		//_objects[2].setInvMass(10.1f);
+		//_objects[3].setInvMass(0);
 		/*_objects[1].setInertialMoment(0.1f);
 		_objects[2].setInertialMoment(0.001f);
 		_objects[3].setInertialMoment(0);*/
 
 		//_objects[0].setPosition(new AGVector2D(0,0));
-		_objects[1].setPosition(new AGVector2D(1.5f,4.3f));
-		_objects[2].setPosition(new AGVector2D(-2.4f,3f));
-		_objects[3].setPosition(new AGVector2D(-1f,-2f));
-		_objects[1].setOrientation((float)Math.PI/4);
-		_objects[2].setOrientation((float)Math.PI/8);
+		_objects[1].setPosition(new AGVector2D(1.5f,3.3f));
+		//_objects[2].setPosition(new AGVector2D(-2.4f,3f));
+		//_objects[3].setPosition(new AGVector2D(-1f,-2f));
+		_objects[1].setOrientation((float)Math.PI/3);
+		//_objects[2].setOrientation((float)Math.PI/8);
 		//_objects[1]._linearVelocity = new AGVector2D(0,-0.1f);
 		//_objects[2]._linearVelocity = new AGVector2D(0,0.1f);
 		//_objects[1]._angularVelocity = 0.1f;
 		//_objects[2]._angularVelocity = -0.1f;
-		_objects[1]._linearAcceleration.setPosition(-1.5f, 13.9f);
+	//	_objects[1]._linearAcceleration.setPosition(-1.5f, 13.9f);
 		//_objects[2]._linearAcceleration.setPosition(0, -0.9f);
 	}
 
@@ -75,7 +75,8 @@ public class AGRenderer implements Renderer {
 	 */
 	private int tmp=0;
 	public void onDrawFrame(GL10 gl) {
-		if(_state==1)_worldTimer+=0.00001f;
+		if(_state==1)
+			_worldTimer+=0.00001f;
 		//очищаем экран
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);	
 		gl.glLoadIdentity();					//грузим единичную матрицу
@@ -86,8 +87,23 @@ public class AGRenderer implements Renderer {
 			_objects[2].applyForce(new AGVector2D(0.000f,-0.09f),new AGVector2D(0f,0f));*/
 		//_objects[1].setLinearAcceleration(new AGVector2D(0,-0.98f));
 	//	_objects[2].setLinearAcceleration(new AGVector2D(0,-0.98f));
-		AGVector2D gravity = new AGVector2D(0,-98);
-		if(_state==1){
+		AGVector2D gravity = new AGVector2D(0,-9.8);
+
+		AGObject2D tmpObj = new AGObject2D(_objects[0].minkovskyDifference(_objects[1]));
+		
+		gl.glColor4f(1.0f, 1f, 1f, 1f);
+		_objects[1].draw(gl);
+
+		/*gl.glColor4f(1.0f, 0f, 0f, 1f);
+		_objects[2].draw(gl);
+		gl.glColor4f(1.0f, 0f, 0f, 1f);
+		_objects[3].draw(gl);*/
+		gl.glColor4f(1.0f, 0f, 0f, 1f);
+		_objects[0].draw(gl);
+		//gl.glColor4f(0.5f, 0.1f, 0.8f, 1f);
+		tmpObj.draw(gl);
+		
+		//if(_state==1){
 			//gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		//	_objects[0].calculatePosition(_worldTimer);
 		//	_objects[1].calculatePosition(_worldTimer);
@@ -96,25 +112,14 @@ public class AGRenderer implements Renderer {
 			_phys.calculateColisions(_objects);
 			
 			//_objects[0].update(gravity, _worldTimer);
-			_objects[1].update(gravity, _worldTimer);
-			_objects[2].update(gravity, _worldTimer);
+			double dt = 0.001;
+			if(_state==1) dt = 0.00;
+			_objects[1].update(gravity, dt);
+			//_objects[2].update(gravity, _worldTimer);
 			//_objects[3].update(gravity, _worldTimer);
 			
-		}
-		//AGObject2D tmpObj = new AGObject2D(_objects[2].minkovskyDifference(_objects[3]));
+		//}
 		
-		gl.glColor4f(1.0f, 1f, 1f, 1f);
-		_objects[1].draw(gl);
-
-		gl.glColor4f(1.0f, 0f, 0f, 1f);
-		_objects[2].draw(gl);
-		gl.glColor4f(1.0f, 0f, 0f, 1f);
-		_objects[3].draw(gl);
-		gl.glColor4f(1.0f, 0f, 0f, 1f);
-		_objects[0].draw(gl);
-		//gl.glColor4f(0.5f, 0.1f, 0.8f, 1f);
-		//tmpObj.draw(gl);
-
 	}
 	/**
 	 * пауза в игре

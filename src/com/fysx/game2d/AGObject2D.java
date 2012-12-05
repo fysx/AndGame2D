@@ -79,7 +79,7 @@ public class AGObject2D {
 			_angularAcceleration = 0f;
 			generateVertices(vertices);
 
-			direction = new AGVector2D(1, 0);
+			direction = new AGVector2D(0, 0);
 			generator= new Random();
 			_friction = 0.7;
 	}
@@ -224,13 +224,15 @@ public class AGObject2D {
 	 */
 	public AGVector2D getSupport(AGVector2D normal){
 		AGVector2D rotatedVec = _vertices[0].rotate(_orientation);
-		double max = normal.multiply(new AGVector2D(rotatedVec.getX()+_position.getX(), rotatedVec.getY()+_position.getY()));
+		rotatedVec = rotatedVec.plus(_position);
+		double max = normal.multiply(rotatedVec);
 		int index=0;
-		for (int i=1;i<_size/2;i++)
+		for (int i=1;i<_vertices.length;i++)
 		{
 			rotatedVec = _vertices[i].rotate(_orientation);
-			double tmp = normal.multiply(new AGVector2D(rotatedVec.getX()+_position.getX(), rotatedVec.getY()+_position.getY()));
-			if(max<tmp) 
+			rotatedVec = rotatedVec.plus(_position);
+			double tmp = normal.multiply(rotatedVec);
+			if(max<=tmp) 
 			{
 				max=tmp;
 				index = i;
@@ -257,7 +259,8 @@ public class AGObject2D {
 		// chose an initial direction
 		// create the initial simplex
         if (direction.isZero())
-        	direction.setPosition(1.0f, 0.0f);
+        	direction.setPosition(inObject.getPosition().minus(_position));
+        direction.normalize();
 		//simplex.add(new AGVector2D(0,1));
 		simplex.add(this.getSupport(inObject, direction));
 		// set the direction to point towards the origin
@@ -284,31 +287,61 @@ public class AGObject2D {
 	public boolean isSameDirection(AGVector2D v1, AGVector2D v2){
 		return v1.multiply(v2) > 0;
 	}
-	protected void findPD(AGObject2D inObject){
-		AGVector2D pd = new AGVector2D(direction);
+	protected boolean findPD(AGObject2D inObject){
+		AGVector2D pd;
+		if(direction.getLength()>0)
+			pd = new AGVector2D(direction);
+		else 
+			pd = (this.getPosition().minus(inObject.getPosition())).normalize().minus();
 		AGVector2D v = new AGVector2D(pd);
 		double angEps = 1e-10f;
-		double eps = 1e-10f;
+		double eps = 0.001f;
 		int break1 =0;
+		
+		double OAlengthOld = 10000;
+		
 		while(true){
 			v.setPosition(pd);
 			int break2 =0;
 			while(true){
+				//ищем точку S в направлении v геометрии CSO
 				AGVector2D S = this.getSupport(inObject, v);
 				//Log.e("S", "S: "+S);
+			double arr[] =  _geom.calcCoefViaNormal(v, S);
+			if(_gl!=null)_geom.drawLine(arr, _gl, new double[] {1f, 0.4f, 0.4f, 0});
+			
+			double arr2[] =  _geom.calcCoefViaCenter(pd);
+			if(_gl!=null)_geom.drawLine(arr2, _gl, new double[] {0.4f,1f, 0.4f, 0});
+			
+			double arr3[] =  _geom.calcCoef(new AGVector2D(), S);
+			if(_gl!=null)_geom.drawLine(arr3, _gl, new double[] {0.4, 0.4, 1f, 0});
+				
 				AGVector2D A = _geom.findCross(_geom.calcCoefViaNormal(v, S), _geom.calcCoefViaCenter(pd));
 				//Log.e("sa", "s-a="+S.minus(A).getLength());
 				//Log.e("sa", "v.x="+v.plus(S.minus(A).multiply(eps)).normalize().getX()+"v.y="+v.plus(S.minus(A).multiply(eps)).normalize().getY());
+				Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
+				
+				if(!A.isSameDirection(pd)) return false;
 				if(A.minus(S).getLength()<=eps || break2>5) break;
-				else v.setPosition(v.plus(A.minus(S).multiply(eps).normalize()));
-				break2++;
+				else v.setPosition(v.plus((A.minus(S).multiply(eps)).normalize()));
+				if(A.getLength()>=OAlengthOld)break2++;
+				else{
+					break2 = 0;
+					OAlengthOld = A.getLength();
+				}
+				//Log.e("a","0="+arr[0]+", 1="+arr[1]+", 2="+arr[2]);
+				
 			}
+
+			AGVector2D S = inObject.getSupport(this, v);
 				//Log.e("pd.getAngle(v)", "pd.getAngle(v): "+pd.getAngle(v));
-			if(pd.getAngle(v)<angEps || break1>5) break;
+			if(Math.abs(pd.getAngle(v))<angEps || break1>5) break;
 			else pd.setPosition(v);
 			break1++;
 		}//Log.e("pd", "pd: "+pd);
+
 		direction.setPosition(pd.normalize());
+		return true;
 	}
 	protected void findContactManifold(AGObject2D inObject){
 		AGContactConstraint constraint = AGContactConstraint.Instance();
@@ -333,7 +366,7 @@ public class AGObject2D {
 						 _geom.checkPointInSegment(a1,b1,b21)};
 		int contactCount = (checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0);
 		Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
-
+		if(_gl!=null){
 		/*_geom.drawLine(_geom.calcCoefViaDir(new AGVector2D(0,0), axis.minus()), _gl,new double[] {1, 1, 1, 0});*/
 		_geom.drawLine(_geom.calcCoefViaDir(a1, axis), _gl,new double[] {0.5f, 1, 1, 0});
 		_geom.drawLine(_geom.calcCoefViaDir(a2, axis), _gl,new double[] {1, 0.5f, 1, 0});
@@ -342,6 +375,7 @@ public class AGObject2D {
 		
 		_geom.drawLine(_geom.calcCoef(a1, b1), _gl,new double[] {1, 0, 1, 0});
 		_geom.drawLine(_geom.calcCoef(a2, b2), _gl,new double[] {1, 1, 1, 0});
+		}
 		Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
 		if(contactCount==2)
 		{

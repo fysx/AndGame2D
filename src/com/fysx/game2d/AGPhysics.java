@@ -13,7 +13,10 @@ public class AGPhysics {
 			for(int j=i+1;j<size;j++)
 			{
 				//if(
-						objects[i].findRange(objects[j]);
+						if(
+								objects[i].findPD(objects[j])
+								)
+							objects[i].findContactManifold(objects[j]);
 						//){
 				//	calculateReactions(objects[i], objects[j]);
 					//Log.e("cont","contacted");
@@ -21,7 +24,7 @@ public class AGPhysics {
 			}
 		}
 		AGContactConstraint constraint = AGContactConstraint.Instance();
-		Log.e("12","manifolds="+constraint.getContacts().size());
+		//Log.e("12","manifolds="+constraint.getContacts().size());
 		for(int i=0;i<constraint.getContacts().size();i++){
 			calculateReactions(constraint.getContacts().get(i));
 			Log.e("c"+i,"c"+i+": d="+constraint.getContacts().get(i).getPD());
