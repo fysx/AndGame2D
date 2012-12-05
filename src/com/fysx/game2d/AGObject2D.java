@@ -370,15 +370,15 @@ public class AGObject2D {
 		Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
 		if(_gl!=null){
 		/*_geom.drawLine(_geom.calcCoefViaDir(new AGVector2D(0,0), axis.minus()), _gl,new double[] {1, 1, 1, 0});*/
-		_geom.drawLine(_geom.calcCoefViaDir(a1, axis), _gl,new double[] {0.5f, 1, 1, 0});
+		/*_geom.drawLine(_geom.calcCoefViaDir(a1, axis), _gl,new double[] {0.5f, 1, 1, 0});
 		_geom.drawLine(_geom.calcCoefViaDir(a2, axis), _gl,new double[] {1, 0.5f, 1, 0});
 		_geom.drawLine(_geom.calcCoefViaDir(b1, axis), _gl,new double[] {0.5f, 1, 1, 0});
 		_geom.drawLine(_geom.calcCoefViaDir(b2, axis), _gl,new double[] {1, 0.5f, 1, 0});
 		
 		_geom.drawLine(_geom.calcCoef(a1, b1), _gl,new double[] {1, 0, 1, 0});
-		_geom.drawLine(_geom.calcCoef(a2, b2), _gl,new double[] {1, 1, 1, 0});
+		_geom.drawLine(_geom.calcCoef(a2, b2), _gl,new double[] {1, 1, 1, 0});*/
 		}
-		Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
+		//Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
 		if(contactCount==2)
 		{
 			if(checs[0]){
