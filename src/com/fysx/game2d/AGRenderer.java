@@ -60,7 +60,7 @@ public class AGRenderer implements Renderer {
 		_objects[1].setPosition(new AGVector2D(1.5f,3.3f));
 		//_objects[2].setPosition(new AGVector2D(-2.4f,3f));
 		//_objects[3].setPosition(new AGVector2D(-1f,-2f));
-		_objects[1].setOrientation((float)Math.PI/4);
+		_objects[1].setOrientation((float)Math.PI/10);
 		//_objects[2].setOrientation((float)Math.PI/8);
 		//_objects[1]._linearVelocity = new AGVector2D(0,-0.1f);
 		//_objects[2]._linearVelocity = new AGVector2D(0,0.1f);

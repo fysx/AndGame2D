@@ -13,9 +13,7 @@ public class AGPhysics {
 			for(int j=i+1;j<size;j++)
 			{
 				//if(
-						if(
-								objects[i].findPD(objects[j])
-								)
+						if(objects[i].findPD(objects[j]))
 							objects[i].findContactManifold(objects[j]);
 						//){
 				//	calculateReactions(objects[i], objects[j]);
@@ -28,7 +26,6 @@ public class AGPhysics {
 		//Log.e("12","manifolds="+constraint.getContacts().size());
 		for(int i=0;i<constraint.getContacts().size();i++){
 			calculateReactions(constraint.getContacts().get(i));
-			Log.e("c"+i,"c"+i+": d="+constraint.getContacts().get(i).getPD());
 		}
 		constraint.getContacts().clear();
 		
@@ -95,11 +92,13 @@ public class AGPhysics {
 	    //Log.e("ang","n1:"+n1.getX()+"+"+n1.getY()+";n2:"+n2.getX()+"+"+n2.getY());
 	}
 	public void calculateReactions(AGContactManifold contactManifold){
+
+		Log.e("c","d: "+contactManifold.getPD()+"; n: "+contactManifold.getNormal().normalize());
 		AGVector2D contactPoint = new AGVector2D(contactManifold.getContactPoint());
-		//Log.e("c1","c1.x"+obj1.getContactPoint().getX()+";c1.y"+obj1.getContactPoint().getY());
-		//Log.e("c2","c2.x"+obj2.getContactPoint().getX()+";c2.y"+obj2.getContactPoint().getY());
 		AGObject2D obj1 = contactManifold.getObj1();
 		AGObject2D obj2 = contactManifold.getObj2();
+		Log.e("c1","c1.x"+obj1.getContactPoint().getX()+";c1.y"+obj1.getContactPoint().getY());
+		Log.e("c2","c2.x"+obj2.getContactPoint().getX()+";c2.y"+obj2.getContactPoint().getY());
 		AGVector2D contactPoint1 = new AGVector2D(contactPoint.minus(obj1.getPosition()));
 		AGVector2D contactPoint2 = new AGVector2D(contactPoint.minus(obj2.getPosition()));
 		
@@ -122,7 +121,7 @@ public class AGPhysics {
 	    		+ w2 * w2 * obj2.getInertialMoment();
 	    
 	    double velocityProjection = relativeLinearVelocity.multiply(n1);
-	    double lambda = (-velocityProjection*elasticity+contactManifold.getPD()-a) / b;
+	    double lambda = (1-velocityProjection*elasticity+contactManifold.getPD()-a) / b;
 	  //double lambda = (10-a) / b;
 	    
 	    
@@ -140,11 +139,11 @@ public class AGPhysics {
 	    double angularVelocityAfterCollision2 = obj2.getAngularVelocity()
 	        + (n1.multiply(lambda).cross(contactPoint2)) * obj2.getInertialMoment();
 	    
-	    obj2.setLinearVelocity(velocityAfterCollision2);
-	    obj2.setAngularVelocity(angularVelocityAfterCollision2);
+	    obj1.setLinearVelocity(velocityAfterCollision2);
+	    //obj2.setAngularVelocity(angularVelocityAfterCollision2);
 	    
-	    obj1.setLinearVelocity(velocityAfterCollision);
-	    obj1.setAngularVelocity(-angularVelocityAfterCollision);
+	    obj2.setLinearVelocity(velocityAfterCollision);
+	    //obj1.setAngularVelocity(-angularVelocityAfterCollision);
 	   /* obj1._linearAcceleration.setPosition(0,0);
 	    obj2._linearAcceleration.setPosition(0,0);*/
  //// obj1._angularAcceleration = 0;

@@ -176,8 +176,10 @@ public class AGGeometry {
 		double coef[] = calcCoef(a, b);
 		//if(coef[0]*x.getX()+coef[1]*x.getY()+coef[2]>EPS) return false;
 		double p=-1;
-		if(a.getX() - b.getX()!=0)p = (x.getX() - b.getX())/(a.getX() - b.getX());
-		else if(a.getY() - b.getY()!=0)p = (x.getY() - b.getY())/(a.getY() - b.getY());
+		if(a.getX() - b.getX()!=0)
+			p = (x.getX() - b.getX())/(a.getX() - b.getX());
+		else if(a.getY() - b.getY()!=0)
+			p = (x.getY() - b.getY())/(a.getY() - b.getY());
 		
 		if(p>=0 && p<=1) return true;
 		else return false;

@@ -182,14 +182,14 @@ public class AGObject2D {
 			
 			
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
-			gl.glColor4f(0, 0, 1, 0);
+			gl.glColor4f(1, 0, 1, 0);
 			gl.glPushMatrix();
 			gl.glTranslatef((float)_closestPoint2.getX(), (float)_closestPoint2.getY(), 0);
 			gl.glDrawArrays(GL10.GL_LINE_LOOP, 0,4);
 			//gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, _size/2);
 			gl.glPopMatrix();
 			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
-			gl.glColor4f(0, 0, 1, 0);
+			gl.glColor4f(1, 1, 1, 0);
 			gl.glPushMatrix();
 			gl.glTranslatef((float)_closestPoint3.getX(), (float)_closestPoint3.getY(), 0);
 			gl.glDrawArrays(GL10.GL_LINE_LOOP, 0,4);
@@ -198,8 +198,10 @@ public class AGObject2D {
 	}
 	public float[] minkovskyDifference(AGObject2D inner){
 		int newSize = inner.getSize()*_size/2;
-		float[] minkovskyDiff = new float[newSize];
+		int segmentsCount = 40;
+		float[] minkovskyDiff = new float[segmentsCount*2-2];
 		int counter=0;//счетчик для нового массива
+		/*
 		for (int i=0;i<_size/2;i++){
 			for (int j=0;j<inner.getSize()/2;j++){
 				minkovskyDiff[counter] = 
@@ -210,6 +212,16 @@ public class AGObject2D {
 					((float)inner.getVertex(j).rotate(inner.getOrientation()).getY()+(float)inner.getPosition().getY());
 				counter+=2;
 			}
+		}*/
+		AGVector2D prevDir = new AGVector2D(1, 0);
+		for(int i = 1; i < segmentsCount; i++)
+		{
+			AGVector2D currDir = new AGVector2D(Math.cos((float)i / (float)segmentsCount * 2.0f * Math.PI), Math.sin((float)i / (float)segmentsCount * 2.0f * Math.PI));
+			AGVector2D s = this.getSupport(inner, currDir);
+			minkovskyDiff[counter] = (float)s.getX();
+			minkovskyDiff[counter+1] = (float)s.getY();
+			counter+=2;
+		    prevDir.setPosition(currDir);
 		}
 		/*Log.i("123", "*****************");
 		for (int i=0;i<newSize;i++){
@@ -325,7 +337,7 @@ public class AGObject2D {
 					direction.setPosition(v);
 					return false;
 				}
-					Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
+				//	Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
 				if(A.minus(S).getLength()<=eps || break2>3) break;
 				else v.setPosition(v.plus(A.minus(S).multiply(eps)).normalize());
 				if(A.getLength()>=OAlengthOld)break2++;
@@ -349,7 +361,7 @@ public class AGObject2D {
 		AGContactConstraint constraint = AGContactConstraint.Instance();
 		
 		AGVector2D axis = new AGVector2D(direction);
-		double delta = (double)Math.PI/30;
+		double delta = (double)Math.PI/10;
 		AGVector2D a1 = this.getSupport(axis.rotate(delta));
 		AGVector2D b1 = this.getSupport(axis.rotate(-delta));
 		AGVector2D a2 = inObject.getSupport(axis.minus().rotate(delta));
@@ -367,7 +379,6 @@ public class AGObject2D {
 						 _geom.checkPointInSegment(a1,b1,a21),
 						 _geom.checkPointInSegment(a1,b1,b21)};
 		int contactCount = (checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0);
-		Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
 		if(_gl!=null){
 		/*_geom.drawLine(_geom.calcCoefViaDir(new AGVector2D(0,0), axis.minus()), _gl,new double[] {1, 1, 1, 0});*/
 		/*_geom.drawLine(_geom.calcCoefViaDir(a1, axis), _gl,new double[] {0.5f, 1, 1, 0});
@@ -381,6 +392,7 @@ public class AGObject2D {
 		//Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
 		if(contactCount==2)
 		{
+		Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
 			if(checs[0]){
 				_closestPoint.setPosition(a11);
 				constraint.getContacts().add(
@@ -429,7 +441,7 @@ public class AGObject2D {
 				}
 			}
 		}
-				_normal.setPosition(axis.minus());
+		_normal.setPosition(axis.minus());
 			
 		//}*/
 	}
