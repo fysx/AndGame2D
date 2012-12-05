@@ -67,7 +67,7 @@ public class AGVector2D {
 		else return false;
 	}
 	public boolean isSameDirection(AGVector2D in){
-		return this.multiply(in) < 0;
+		return this.multiply(in) >= 0;
 	}
 	public static AGVector2D tripleProduct(AGVector2D a, AGVector2D b, AGVector2D c) {
         // expanded version of above formula

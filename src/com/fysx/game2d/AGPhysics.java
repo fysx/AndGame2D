@@ -21,6 +21,7 @@ public class AGPhysics {
 				//	calculateReactions(objects[i], objects[j]);
 					//Log.e("cont","contacted");
 				//}
+		//objects[i].findRange(objects[j]);
 			}
 		}
 		AGContactConstraint constraint = AGContactConstraint.Instance();
@@ -32,7 +33,7 @@ public class AGPhysics {
 		constraint.getContacts().clear();
 		
 	}
-	public void calculateReactions2(AGObject2D obj1, AGObject2D obj2){
+	public void calculateReactions1(AGObject2D obj1, AGObject2D obj2){
 		AGVector2D contactPoint = new AGVector2D(obj1.getContactPoint());
 		//Log.e("c1","c1.x"+obj1.getContactPoint().getX()+";c1.y"+obj1.getContactPoint().getY());
 		//Log.e("c2","c2.x"+obj2.getContactPoint().getX()+";c2.y"+obj2.getContactPoint().getY());
@@ -93,7 +94,7 @@ public class AGPhysics {
 	    obj2.setAngularVelocity(-angularVelocityAfterCollision2);
 	    //Log.e("ang","n1:"+n1.getX()+"+"+n1.getY()+";n2:"+n2.getX()+"+"+n2.getY());
 	}
-	public void calculateReactions1(AGContactManifold contactManifold){
+	public void calculateReactions(AGContactManifold contactManifold){
 		AGVector2D contactPoint = new AGVector2D(contactManifold.getContactPoint());
 		//Log.e("c1","c1.x"+obj1.getContactPoint().getX()+";c1.y"+obj1.getContactPoint().getY());
 		//Log.e("c2","c2.x"+obj2.getContactPoint().getX()+";c2.y"+obj2.getContactPoint().getY());
@@ -150,7 +151,7 @@ public class AGPhysics {
  //// obj2._angularAcceleration = 0;
 	    //Log.e("ang","n1:"+n1.getX()+"+"+n1.getY()+";n2:"+n2.getX()+"+"+n2.getY());
 	}
-	public void calculateReactions/*solveContact*/(AGContactManifold contact){
+	public void calculateReactions111/*solveContact*/(AGContactManifold contact){
 		AGObject2D obj1 = contact.getObj1();
 		AGObject2D obj2 = contact.getObj2();
 		AGVector2D v1, v2, vr, t, j;

@@ -144,7 +144,7 @@ public class AGObject2D {
 		//gl.glTexCoordPointer(2, GL10.GL_double, 0, textureBuffer);
 		gl.glPushMatrix();
 		gl.glTranslatef((float)_position.getX(), (float)_position.getY(), 0);
-		double angle = _orientation/(Math.PI/180.);
+		double angle = _orientation*180/Math.PI;
 		gl.glRotatef((float)angle, 0, 0,1);
 		gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, _size/2);
 		//gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, _size/2);
@@ -292,9 +292,9 @@ public class AGObject2D {
 		if(direction.getLength()>0)
 			pd = new AGVector2D(direction);
 		else 
-			pd = (this.getPosition().minus(inObject.getPosition())).normalize().minus();
+			pd = (inObject.getPosition().minus(_position)).normalize();
 		AGVector2D v = new AGVector2D(pd);
-		double angEps = 1e-10f;
+		double angEps = 0.001;
 		double eps = 0.001f;
 		int break1 =0;
 		
@@ -313,30 +313,34 @@ public class AGObject2D {
 			double arr2[] =  _geom.calcCoefViaCenter(pd);
 			if(_gl!=null)_geom.drawLine(arr2, _gl, new double[] {0.4f,1f, 0.4f, 0});
 			
-			double arr3[] =  _geom.calcCoef(new AGVector2D(), S);
+			double arr3[] =  _geom.calcCoef(new AGVector2D(0,0),S);
 			if(_gl!=null)_geom.drawLine(arr3, _gl, new double[] {0.4, 0.4, 1f, 0});
 				
 				AGVector2D A = _geom.findCross(_geom.calcCoefViaNormal(v, S), _geom.calcCoefViaCenter(pd));
+
+				double arr4[] =  _geom.calcCoef(new AGVector2D(1,1),A);
+				if(_gl!=null)_geom.drawLine(arr4, _gl, new double[] {0.9, 0.9, 1f, 0});
 				//Log.e("sa", "s-a="+S.minus(A).getLength());
 				//Log.e("sa", "v.x="+v.plus(S.minus(A).multiply(eps)).normalize().getX()+"v.y="+v.plus(S.minus(A).multiply(eps)).normalize().getY());
-				Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
 				
-				if(!A.isSameDirection(pd)) return false;
-				if(A.minus(S).getLength()<=eps || break2>5) break;
-				else v.setPosition(v.plus((A.minus(S).multiply(eps)).normalize()));
+				
+				if(!A.isSameDirection(pd)){
+					direction.setPosition(pd);
+					return false;
+				}
+					Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
+				if(A.minus(S).getLength()<=eps /*|| break2>5*/) break;
+				else v.setPosition(v.plus(A.minus(S).multiply(eps)).normalize());
 				if(A.getLength()>=OAlengthOld)break2++;
 				else{
-					break2 = 0;
+					//break2 = 0;
 					OAlengthOld = A.getLength();
 				}
 				//Log.e("a","0="+arr[0]+", 1="+arr[1]+", 2="+arr[2]);
 				
 			}
-
-			AGVector2D S = inObject.getSupport(this, v);
-				//Log.e("pd.getAngle(v)", "pd.getAngle(v): "+pd.getAngle(v));
+			pd.setPosition(v);
 			if(Math.abs(pd.getAngle(v))<angEps || break1>5) break;
-			else pd.setPosition(v);
 			break1++;
 		}//Log.e("pd", "pd: "+pd);
 

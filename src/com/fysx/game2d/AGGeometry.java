@@ -43,6 +43,9 @@ public class AGGeometry {
 			else{ B = 1; 
 			 C = -A * x2 + y2;}
 		 }
+		 A = y1-y2;
+		 B = x2-x1;
+		 C = x1*y2 - x2*y1;
 		 return new double[] {A, B, C};
 	}
 	public  double[] calcCoefViaDir(AGVector2D point, AGVector2D v){//поиск уравнения прямой по направляющему вектору
@@ -151,7 +154,7 @@ public class AGGeometry {
 	}
 	public AGVector2D findCross(double[] v1, double[] v2) {
 		double EPS = 1e-9f;
-		double zn = det (v1[0], v1[1], v2[0], v1[1]);
+		double zn = det (v1[0], v1[1], v2[0], v2[1]);
 	//	Log.e("p","zn="+zn);
 		if (Math.abs (zn) < EPS) return  new AGVector2D();
 		double x = - det (v1[2], v1[1], v2[2], v2[1]) / zn;
