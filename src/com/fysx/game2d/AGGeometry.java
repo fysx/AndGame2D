@@ -43,9 +43,9 @@ public class AGGeometry {
 			else{ B = 1; 
 			 C = -A * x2 + y2;}
 		 }
-		 A = y1-y2;
+		 /*A = y1-y2;
 		 B = x2-x1;
-		 C = x1*y2 - x2*y1;
+		 C = x1*y2 - x2*y1;*/
 		 return new double[] {A, B, C};
 	}
 	public  double[] calcCoefViaDir(AGVector2D point, AGVector2D v){//поиск уравнения прямой по направляющему вектору
@@ -171,9 +171,15 @@ public class AGGeometry {
 		x = -(v1[2]+v1[1]*y)/v1[0];
 		return  new AGVector2D(x,y);
 	}
+	//return (x - a).dot(x - b) < 0;
+	
 	public boolean checkPointInSegment(AGVector2D a, AGVector2D b, AGVector2D x){
 		double EPS = 1e-3f;
-		double coef[] = calcCoef(a, b);
+		if(Math.sqrt(b.minus(a).cross(x.minus(a))) < EPS)
+			if(x.minus(a).multiply(x.minus(b)) < 0)
+				return true;
+		return false;
+		/*double coef[] = calcCoef(a, b);
 		//if(coef[0]*x.getX()+coef[1]*x.getY()+coef[2]>EPS) return false;
 		double p=-1;
 		if(a.getX() - b.getX()!=0)
@@ -182,7 +188,7 @@ public class AGGeometry {
 			p = (x.getY() - b.getY())/(a.getY() - b.getY());
 		
 		if(p>=0 && p<=1) return true;
-		else return false;
+		else return false;*/
 	}
 	public AGVector2D findNormal(AGVector2D a, AGVector2D b){
 		double coefs[] = calcCoef(a,b);

@@ -57,7 +57,6 @@ public class AGVector2D {
 	}
 	public double cross(AGVector2D v){
 		return this ._x * v.getY() - this ._y * v.getX();
-		
 	}
 	public double getAngle(AGVector2D in){
 		return this.multiply(in)/(this.getLength()*in.getLength());

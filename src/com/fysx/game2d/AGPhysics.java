@@ -97,8 +97,7 @@ public class AGPhysics {
 		AGVector2D contactPoint = new AGVector2D(contactManifold.getContactPoint());
 		AGObject2D obj1 = contactManifold.getObj1();
 		AGObject2D obj2 = contactManifold.getObj2();
-		Log.e("c1","c1.x"+obj1.getContactPoint().getX()+";c1.y"+obj1.getContactPoint().getY());
-		Log.e("c2","c2.x"+obj2.getContactPoint().getX()+";c2.y"+obj2.getContactPoint().getY());
+		Log.e("c1","c1: "+contactPoint);
 		AGVector2D contactPoint1 = new AGVector2D(contactPoint.minus(obj1.getPosition()));
 		AGVector2D contactPoint2 = new AGVector2D(contactPoint.minus(obj2.getPosition()));
 		

@@ -392,7 +392,7 @@ public class AGObject2D {
 		//Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
 		if(contactCount==2)
 		{
-		Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
+		//Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
 			if(checs[0]){
 				_closestPoint.setPosition(a11);
 				constraint.getContacts().add(
