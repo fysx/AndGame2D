@@ -294,7 +294,7 @@ public class AGObject2D {
 		else 
 			pd = (inObject.getPosition().minus(_position)).normalize();
 		AGVector2D v = new AGVector2D(pd);
-		double angEps = 0.001;
+		double angEps = 0.0001;
 		double eps = 0.001f;
 		int break1 =0;
 		
@@ -320,27 +320,25 @@ public class AGObject2D {
 
 				double arr4[] =  _geom.calcCoef(new AGVector2D(1,1),A);
 				if(_gl!=null)_geom.drawLine(arr4, _gl, new double[] {0.9, 0.9, 1f, 0});
-				//Log.e("sa", "s-a="+S.minus(A).getLength());
-				//Log.e("sa", "v.x="+v.plus(S.minus(A).multiply(eps)).normalize().getX()+"v.y="+v.plus(S.minus(A).multiply(eps)).normalize().getY());
-				
-				
+	
 				if(!A.isSameDirection(pd)){
-					direction.setPosition(pd);
+					direction.setPosition(v);
 					return false;
 				}
 					Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
-				if(A.minus(S).getLength()<=eps /*|| break2>5*/) break;
+				if(A.minus(S).getLength()<=eps || break2>3) break;
 				else v.setPosition(v.plus(A.minus(S).multiply(eps)).normalize());
 				if(A.getLength()>=OAlengthOld)break2++;
 				else{
-					//break2 = 0;
+					break2 = 0;
 					OAlengthOld = A.getLength();
 				}
 				//Log.e("a","0="+arr[0]+", 1="+arr[1]+", 2="+arr[2]);
 				
 			}
-			pd.setPosition(v);
+			
 			if(Math.abs(pd.getAngle(v))<angEps || break1>5) break;
+			else pd.setPosition(v);
 			break1++;
 		}//Log.e("pd", "pd: "+pd);
 
