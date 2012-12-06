@@ -49,11 +49,11 @@ public class AGRenderer implements Renderer {
 		//_objects[2] = new AGObject2D(vertices);
 		//_objects[3] = new AGObject2D(vertices2);
 		_objects[0].setInvMass(0.0f);
-		_objects[1].setInvMass(1000.1f);
+		_objects[1].setInvMass(0.7f);
 		//_objects[2].setInvMass(10.1f);
 		//_objects[3].setInvMass(0);
-		_objects[0].setInertialMoment(0.0f);
-		_objects[1].setInertialMoment(100.1f);
+		_objects[0].setInertialMoment(0.000f);
+		_objects[1].setInertialMoment(0.7f*10);
 		/*_objects[2].setInertialMoment(0.001f);
 		_objects[3].setInertialMoment(0);*/
 
@@ -61,7 +61,7 @@ public class AGRenderer implements Renderer {
 		_objects[1].setPosition(new AGVector2D(1.5f,3.3f));
 		//_objects[2].setPosition(new AGVector2D(-2.4f,3f));
 		//_objects[3].setPosition(new AGVector2D(-1f,-2f));
-		_objects[1].setOrientation((float)Math.PI/10);
+		_objects[1].setOrientation((float)Math.PI/3);
 		//_objects[2].setOrientation((float)Math.PI/8);
 		//_objects[1]._linearVelocity = new AGVector2D(0,-1f);
 		//_objects[2]._linearVelocity = new AGVector2D(0,0.1f);
@@ -88,7 +88,7 @@ public class AGRenderer implements Renderer {
 			_objects[2].applyForce(new AGVector2D(0.000f,-0.09f),new AGVector2D(0f,0f));*/
 		//_objects[1].setLinearAcceleration(new AGVector2D(0,-0.98f));
 	//	_objects[2].setLinearAcceleration(new AGVector2D(0,-0.98f));
-		AGVector2D gravity = new AGVector2D(0,-9.8);
+		AGVector2D gravity = new AGVector2D(0,-0.98);
 
 		AGObject2D tmpObj = new AGObject2D(_objects[0].minkovskyDifference(_objects[1]));
 		

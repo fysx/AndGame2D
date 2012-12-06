@@ -70,6 +70,28 @@ public class AGGeometry {
 		 C = -(x1*x+y1*y);
 		 return new double[] {A, B, C};
 	}
+	public void drawPoint(AGVector2D in, GL10 gl, double[] color){
+		float vertices[] = {
+			      -0.05f,  0.05f,
+			      -0.05f, -0.05f,
+			      	0.05f, -0.05f,
+			       0.05f,  0.05f, 
+			};
+
+			// a double is 4 bytes, therefore we multiply the number if vertices with 4.
+			ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+			vbb.order(ByteOrder.nativeOrder());
+			FloatBuffer vertexBuffer = vbb.asFloatBuffer();
+			vertexBuffer.put(vertices);
+			vertexBuffer.position(0);
+
+			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, vertexBuffer);
+			gl.glColor4f((float)color[0],(float)color[1],(float)color[2],(float)color[3]);
+			gl.glPushMatrix();
+			gl.glTranslatef((float)in.getX(), (float)in.getY(), 0);
+			gl.glDrawArrays(GL10.GL_LINE_LOOP, 0,4);
+			gl.glPopMatrix();
+	}
 	public void drawLine(double[] in, GL10 gl, double[] color){
 		float vertices[] = {
 			      -10f,  -((float)in[0]*-10+(float)in[2])/(float)in[1],

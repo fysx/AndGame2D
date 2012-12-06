@@ -204,18 +204,7 @@ public class AGObject2D {
 		int segmentsCount = 40;
 		float[] minkovskyDiff = new float[segmentsCount*2-2];
 		int counter=0;//счетчик для нового массива
-		/*
-		for (int i=0;i<_size/2;i++){
-			for (int j=0;j<inner.getSize()/2;j++){
-				minkovskyDiff[counter] = 
-					((float)_vertices[i].rotate(_orientation).getX()+(float)_position.getX())-
-					((float)inner.getVertex(j).rotate(inner.getOrientation()).getX()+(float)inner.getPosition().getX());
-				minkovskyDiff[counter+1] = 
-					((float)_vertices[i].rotate(_orientation).getY()+(float)_position.getY())-
-					((float)inner.getVertex(j).rotate(inner.getOrientation()).getY()+(float)inner.getPosition().getY());
-				counter+=2;
-			}
-		}*/
+
 		AGVector2D prevDir = new AGVector2D(1, 0);
 		for(int i = 1; i < segmentsCount; i++)
 		{
@@ -364,11 +353,11 @@ public class AGObject2D {
 		AGContactConstraint constraint = AGContactConstraint.Instance();
 		
 		AGVector2D axis = new AGVector2D(direction);
-		double delta = (double)Math.PI/20;
+		double delta = (double)Math.PI/10;
 		AGVector2D a1 = this.getSupport(axis.rotate(delta));
 		AGVector2D b1 = this.getSupport(axis.rotate(-delta));
-		AGVector2D a2 = inObject.getSupport(axis.minus().rotate(-delta));
-		AGVector2D b2 = inObject.getSupport(axis.minus().rotate(delta));
+		AGVector2D a2 = inObject.getSupport(axis.minus().rotate(delta));
+		AGVector2D b2 = inObject.getSupport(axis.minus().rotate(-delta));
 		//Log.e("1","a1="+a1+";\na2="+a2+";\nb1="+b1+";\nb2=b2"+b2+";");
 		//_geom.drawLine(_geom.calcCoef(a2, b2), _gl, new double[] {0, 1, 0, 0});
 		//_geom.drawLine(_geom.calcCoef(a1, b1), _gl,new double[] {1, 1, 0, 0});
@@ -383,6 +372,15 @@ public class AGObject2D {
 						 _geom.checkPointInSegment(a1,b1,b21)};
 		int contactCount = (checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0);
 		if(_gl!=null){
+			_geom.drawPoint(a11, _gl, new double[] {0.5f, 1, 1, 0});
+			_geom.drawPoint(a21, _gl, new double[] {0.5f, 0.5, 1, 0});
+			_geom.drawPoint(b11, _gl, new double[] {0.5f, 1, 1, 0});
+			_geom.drawPoint(b21, _gl, new double[] {0.5f, .5, 1, 0});
+			
+			_geom.drawPoint(a1, _gl, new double[] {0.5f, 1, 0.5, 0});
+			_geom.drawPoint(a2, _gl, new double[] {0.5f, 0.5, 0.5, 0});
+			_geom.drawPoint(b1, _gl, new double[] {0.5f, 1, 0.5, 0});
+			_geom.drawPoint(b2, _gl, new double[] {0.5f, .5, 0.5, 0});
 		/*_geom.drawLine(_geom.calcCoefViaDir(new AGVector2D(0,0), axis.minus()), _gl,new double[] {1, 1, 1, 0});*/
 		/*_geom.drawLine(_geom.calcCoefViaDir(a1, axis), _gl,new double[] {0.5f, 1, 1, 0});
 		_geom.drawLine(_geom.calcCoefViaDir(a2, axis), _gl,new double[] {1, 0.5f, 1, 0});
@@ -392,7 +390,7 @@ public class AGObject2D {
 		_geom.drawLine(_geom.calcCoef(a1, b1), _gl,new double[] {1, 0, 1, 0});
 		_geom.drawLine(_geom.calcCoef(a2, b2), _gl,new double[] {1, 1, 1, 0});*/
 		}
-		//Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
+		Log.e("cc","cc="+(checs[0]?1:0) + (checs[1]?1:0) + (checs[2]?1:0) + (checs[3]?1:0));
 		if(contactCount==2)
 		{
 		//Log.e("1","a11="+a11+";\nb11="+b11+"\na21="+a21+";\nb21="+b21);
@@ -401,8 +399,15 @@ public class AGObject2D {
 				constraint.getContacts().add(
 									new AGContactManifold(this, 
 														  inObject,
-														  _geom.findNormal(b2, a2),
+														  axis.normalize(),
 														  a11,
+														  a1.minus(a11).getLength())
+								);
+				constraint.getContacts().add(
+									new AGContactManifold(this, 
+														  inObject,
+														  axis.normalize().minus(),
+														  a1,
 														  a1.minus(a11).getLength())
 								);
 			}
@@ -413,8 +418,15 @@ public class AGObject2D {
 					constraint.getContacts().add(
 							new AGContactManifold(this, 
 												  inObject,
-												  _geom.findNormal(b2, a2),
+												  axis,
 												  b11,
+												  b1.minus(b11).getLength())
+						);
+					constraint.getContacts().add(
+							new AGContactManifold(this, 
+												  inObject,
+												  axis.minus(),
+												  b1,
 												  b1.minus(b11).getLength())
 						);
 				}
@@ -425,8 +437,15 @@ public class AGObject2D {
 				constraint.getContacts().add(
 						new AGContactManifold(this, 
 											  inObject,
-											  _geom.findNormal(b1, a1),
+											  axis,
 											  a21,
+											  a2.minus(a21).getLength())
+					);
+				constraint.getContacts().add(
+						new AGContactManifold(this, 
+											  inObject,
+											  axis.minus(),
+											  a2,
 											  a2.minus(a21).getLength())
 					);
 			}
@@ -437,8 +456,15 @@ public class AGObject2D {
 					constraint.getContacts().add(
 							new AGContactManifold(this, 
 												  inObject,
-												  _geom.findNormal(b1, a1),
+												  axis,
 												  b21,
+												  b2.minus(b21).getLength())
+						);
+					constraint.getContacts().add(
+							new AGContactManifold(this, 
+												  inObject,
+												  axis.minus(),
+												  b2,
 												  b2.minus(b21).getLength())
 						);
 				}
