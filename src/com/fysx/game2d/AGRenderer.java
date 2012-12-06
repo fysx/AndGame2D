@@ -48,12 +48,13 @@ public class AGRenderer implements Renderer {
 		_objects[1] = new AGObject2D(vertices);
 		//_objects[2] = new AGObject2D(vertices);
 		//_objects[3] = new AGObject2D(vertices2);
-		_objects[0].setInvMass(0);
-		_objects[1].setInvMass(10.1f);
+		_objects[0].setInvMass(0.0f);
+		_objects[1].setInvMass(1000.1f);
 		//_objects[2].setInvMass(10.1f);
 		//_objects[3].setInvMass(0);
-		/*_objects[1].setInertialMoment(0.1f);
-		_objects[2].setInertialMoment(0.001f);
+		_objects[0].setInertialMoment(0.0f);
+		_objects[1].setInertialMoment(100.1f);
+		/*_objects[2].setInertialMoment(0.001f);
 		_objects[3].setInertialMoment(0);*/
 
 		//_objects[0].setPosition(new AGVector2D(0,0));
@@ -62,7 +63,7 @@ public class AGRenderer implements Renderer {
 		//_objects[3].setPosition(new AGVector2D(-1f,-2f));
 		_objects[1].setOrientation((float)Math.PI/10);
 		//_objects[2].setOrientation((float)Math.PI/8);
-		//_objects[1]._linearVelocity = new AGVector2D(0,-0.1f);
+		//_objects[1]._linearVelocity = new AGVector2D(0,-1f);
 		//_objects[2]._linearVelocity = new AGVector2D(0,0.1f);
 		//_objects[1]._angularVelocity = 0.1f;
 		//_objects[2]._angularVelocity = -0.1f;
@@ -112,8 +113,9 @@ public class AGRenderer implements Renderer {
 			_phys.calculateColisions(_objects);
 			
 			//_objects[0].update(gravity, _worldTimer);
-			double dt = 0.001;
+			double dt = 0.01;
 			if(_state==1) dt = 0.00;
+			_objects[0].update(gravity, dt);
 			_objects[1].update(gravity, dt);
 			//_objects[2].update(gravity, _worldTimer);
 			//_objects[3].update(gravity, _worldTimer);

@@ -124,9 +124,12 @@ public class AGObject2D {
 	 * @param dt - отрезок времени
 	 */
 	public void update(AGVector2D gravity, double dt){
-		_linearAcceleration = _linearAcceleration.plus(gravity.multiply(dt));
-		_orientation += _angularAcceleration*dt;
-		_position = _position.plus(_linearAcceleration.multiply(dt));
+		if(this._invMass>0)
+			this._linearVelocity.setPosition(this._linearVelocity.plus(gravity.multiply(dt)));
+		//_orientation += _angularAcceleration*dt;
+		calculateVelocity(dt);
+		calculatePosition(dt);
+		//_position = _position.plus(_linearAcceleration.multiply(dt));
 	}
 	/**
 	 * 
@@ -144,7 +147,7 @@ public class AGObject2D {
 		//gl.glTexCoordPointer(2, GL10.GL_double, 0, textureBuffer);
 		gl.glPushMatrix();
 		gl.glTranslatef((float)_position.getX(), (float)_position.getY(), 0);
-		double angle = _orientation*180/Math.PI;
+		double angle = _orientation*180.0/Math.PI;
 		gl.glRotatef((float)angle, 0, 0,1);
 		gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, _size/2);
 		//gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, _size/2);
@@ -307,8 +310,8 @@ public class AGObject2D {
 			pd = (inObject.getPosition().minus(_position)).normalize();
 		AGVector2D v = new AGVector2D(pd);
 		double angEps = 0.0001;
-		double eps = 0.001f;
-		int break1 =0;
+		double eps = 0.0001f;
+		int break1 = 0;
 		
 		double OAlengthOld = 10000;
 		
@@ -319,26 +322,26 @@ public class AGObject2D {
 				//ищем точку S в направлении v геометрии CSO
 				AGVector2D S = this.getSupport(inObject, v);
 				//Log.e("S", "S: "+S);
-			double arr[] =  _geom.calcCoefViaNormal(v, S);
+			/*double arr[] =  _geom.calcCoefViaNormal(v, S);
 			if(_gl!=null)_geom.drawLine(arr, _gl, new double[] {1f, 0.4f, 0.4f, 0});
 			
 			double arr2[] =  _geom.calcCoefViaCenter(pd);
 			if(_gl!=null)_geom.drawLine(arr2, _gl, new double[] {0.4f,1f, 0.4f, 0});
 			
 			double arr3[] =  _geom.calcCoef(new AGVector2D(0,0),S);
-			if(_gl!=null)_geom.drawLine(arr3, _gl, new double[] {0.4, 0.4, 1f, 0});
+			if(_gl!=null)_geom.drawLine(arr3, _gl, new double[] {0.4, 0.4, 1f, 0});*/
 				
 				AGVector2D A = _geom.findCross(_geom.calcCoefViaNormal(v, S), _geom.calcCoefViaCenter(pd));
 
-				double arr4[] =  _geom.calcCoef(new AGVector2D(1,1),A);
-				if(_gl!=null)_geom.drawLine(arr4, _gl, new double[] {0.9, 0.9, 1f, 0});
+			/*	double arr4[] =  _geom.calcCoef(new AGVector2D(1,1),A);
+				if(_gl!=null)_geom.drawLine(arr4, _gl, new double[] {0.9, 0.9, 1f, 0});*/
 	
 				if(!A.isSameDirection(pd)){
 					direction.setPosition(v);
 					return false;
 				}
 				//	Log.e("iteration "+break2,  "A: "+A+"; \npd: "+pd);
-				if(A.minus(S).getLength()<=eps || break2>3) break;
+				if(A.minus(S).getLength()<=eps || break2>5) break;
 				else v.setPosition(v.plus(A.minus(S).multiply(eps)).normalize());
 				if(A.getLength()>=OAlengthOld)break2++;
 				else{
@@ -361,11 +364,11 @@ public class AGObject2D {
 		AGContactConstraint constraint = AGContactConstraint.Instance();
 		
 		AGVector2D axis = new AGVector2D(direction);
-		double delta = (double)Math.PI/10;
+		double delta = (double)Math.PI/20;
 		AGVector2D a1 = this.getSupport(axis.rotate(delta));
 		AGVector2D b1 = this.getSupport(axis.rotate(-delta));
-		AGVector2D a2 = inObject.getSupport(axis.minus().rotate(delta));
-		AGVector2D b2 = inObject.getSupport(axis.minus().rotate(-delta));
+		AGVector2D a2 = inObject.getSupport(axis.minus().rotate(-delta));
+		AGVector2D b2 = inObject.getSupport(axis.minus().rotate(delta));
 		//Log.e("1","a1="+a1+";\na2="+a2+";\nb1="+b1+";\nb2=b2"+b2+";");
 		//_geom.drawLine(_geom.calcCoef(a2, b2), _gl, new double[] {0, 1, 0, 0});
 		//_geom.drawLine(_geom.calcCoef(a1, b1), _gl,new double[] {1, 1, 0, 0});
@@ -400,7 +403,7 @@ public class AGObject2D {
 														  inObject,
 														  _geom.findNormal(b2, a2),
 														  a11,
-														  a1.minus(a11).getLength()/2)
+														  a1.minus(a11).getLength())
 								);
 			}
 			if(checs[1]){
@@ -412,7 +415,7 @@ public class AGObject2D {
 												  inObject,
 												  _geom.findNormal(b2, a2),
 												  b11,
-												  b1.minus(b11).getLength()/2)
+												  b1.minus(b11).getLength())
 						);
 				}
 			}
@@ -424,7 +427,7 @@ public class AGObject2D {
 											  inObject,
 											  _geom.findNormal(b1, a1),
 											  a21,
-											  a2.minus(a21).getLength()/2)
+											  a2.minus(a21).getLength())
 					);
 			}
 			if(checs[3]){
@@ -436,7 +439,7 @@ public class AGObject2D {
 												  inObject,
 												  _geom.findNormal(b1, a1),
 												  b21,
-												  b2.minus(b21).getLength()/2)
+												  b2.minus(b21).getLength())
 						);
 				}
 			}
@@ -522,12 +525,12 @@ public class AGObject2D {
 	}
 	//physics going here
 	public void calculateVelocity(double dt){
-		/*_linearVelocity = _linearVelocity.plus(_linearAcceleration.multiply(dt));
-		_angularVelocity += _angularAcceleration*dt;*/
+		_linearVelocity = _linearVelocity.plus(_linearAcceleration.multiply(dt));
+		_angularVelocity += _angularAcceleration*dt;
 	}
 	public void calculatePosition(double dt){
-		/*_position = _position.plus(_linearVelocity.multiply(dt));
-		_orientation += _angularVelocity*dt;*/
+		_position = _position.plus(_linearVelocity.multiply(dt));
+		_orientation += _angularVelocity*dt;
 	}
 	public int getSize(){
 		return _size;
@@ -568,7 +571,7 @@ public class AGObject2D {
 	public void setInvMass(double invMass){
 		_invMass=invMass;
 
-		calculateInertia();
+		//calculateInertia();
 	}
 	public double getInvMass(){
 		return _invMass;
